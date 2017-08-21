@@ -1,0 +1,229 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  braillepatterns.sty
+%
+%  based on William Parks braille.sty package.
+%
+%  William Park <opengeometry@yahoo.ca>
+%  September 1998, April 1999
+%      - original author
+%
+%  Dominique Unruh <dominique@unruh.de>
+%  March 2001, October 2001
+%      - major additions
+%
+%  Reiner Dolp <>
+%  August 2017
+%      - Repurpose as braille pattern renderer: remove any functionality except
+%      for basic glyph rendering. Add \DeclareUnicodeCharacter for each unicode
+%      character in the braille pattern range.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ORIGINAL COPYRIGHT AND LICENSE BLOCK FOR `BRAILLE` PACKAGE:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Copyright 1998-2010 William Park
+%
+%  This work may be distributed and/or modified under the
+%  conditions of the LaTeX Project Public License, either version 1.3
+%  of this license or (at your option) any later version.
+%  The latest version of this license is in
+%      http://www.latex-project.org/lppl.txt
+%  and version 1.3 or later is part of all distributions of LaTeX
+%  version 2005/12/01 or later.
+%
+%  This work has the LPPL maintenance status `maintained'.
+%
+%  The Current Maintainer of this work is William Park.
+%
+%  This work consists of all files listed below:
+%      README          -- this file
+%      braille.html    -- short description of braille.sty, grade[12].py
+%      braille.sty     -- LaTeX2e package for typesetting Braille
+%      braillegif1.gif -- transparent image
+%      braillegif2.gif -- transparent image
+%      grade1.py       -- Python script to convert text to Grade 1 Braille
+%      grade2.py       -- Python script to convert text to Grade 2 Braille
+%      summary.pdf     -- PDF of summary.tex
+%      summary.tex     -- list of TeX macros and Braille symbols
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{braillepatterns}
+
+\newlength{\brailleunit}
+\setlength{\brailleunit}{1.5mm}
+\newcommand{\brailledot}{\circle*{0.6}}
+
+\newif\ifbrailleputtinydots
+\newif\ifbrailleeightdots
+
+\DeclareOption{puttinydots}{\brailleputtinydotstrue}
+
+\ProcessOptions
+
+\newcommand{\braillebox}[1]{{\unitlength=\brailleunit
+    \ifx\TeXXeTstate\undefined\else\ifnum\TeXXeTstate=0\else\beginL\fi\fi
+    \kern0.5\unitlength
+    \ifbrailleeightdots
+      \raisebox{-0.5\unitlength}[4\unitlength]{%
+        \begin{picture}(2,4)(0,-1)
+          \ifbrailleputtinydots\put@tinydots\fi
+          \put@dot{#1}
+        \end{picture}}%
+    \else
+      \raisebox{-0.5\unitlength}[3\unitlength]{%
+        \begin{picture}(2,3)
+          \ifbrailleputtinydots\put@tinydots\fi
+          \put@dot{#1}
+        \end{picture}}%
+    \fi
+    \kern0.5\unitlength
+    \ifx\TeXXeTstate\undefined\else\ifnum\TeXXeTstate=0\else\endL\fi\fi}}
+
+\newcommand{\put@tinydots}{%
+  \put(0.5,2.5){\makebox[0pt]{\tiny.}}
+  \put(0.5,1.5){\makebox[0pt]{\tiny.}}
+  \put(0.5,0.5){\makebox[0pt]{\tiny.}}
+  \put(1.5,2.5){\makebox[0pt]{\tiny.}}
+  \put(1.5,1.5){\makebox[0pt]{\tiny.}}
+  \put(1.5,0.5){\makebox[0pt]{\tiny.}}
+  \ifbrailleeightdots
+  \put(0.5,-.5){\makebox[0pt]{\tiny.}}%
+  \put(1.5,-.5){\makebox[0pt]{\tiny.}}\fi}
+
+\newcommand{\put@dot}[1]{\@tfor\tempyyy:=#1\do{\ifcase\tempyyy
+    \PackageError{braille}{Bad dots #1}%
+    {Can only display dots 1-8}\or
+    \put(0.5,2.5){\brailledot}\or
+    \put(0.5,1.5){\brailledot}\or
+    \put(0.5,0.5){\brailledot}\or
+    \put(1.5,2.5){\brailledot}\or
+    \put(1.5,1.5){\brailledot}\or
+    \put(1.5,0.5){\brailledot}\or
+    \ifbrailleeightdots\put(0.5,-.5){\brailledot}\else
+    \PackageError{braille}{Bad dots in #1}{Use option 8dots to use
+      eight dot braille}\fi\or
+    \ifbrailleeightdots\put(1.5,-.5){\brailledot}\else
+    \PackageError{braille}{Bad dots in #1}{Use option 8dots to use
+      eight dot braille}\fi\else
+    \PackageError{braille}{Bad dots #1}%
+    {Can only display dots 1-8}\fi}}
+
+\DeclareUnicodeCharacter{2800}{\brailleeightdotsfalse\braillebox{}}
+\DeclareUnicodeCharacter{2801}{\brailleeightdotsfalse\braillebox{1}}
+\DeclareUnicodeCharacter{2802}{\brailleeightdotsfalse\braillebox{2}}
+\DeclareUnicodeCharacter{2803}{\brailleeightdotsfalse\braillebox{12}}
+\DeclareUnicodeCharacter{2804}{\brailleeightdotsfalse\braillebox{3}}
+\DeclareUnicodeCharacter{2805}{\brailleeightdotsfalse\braillebox{13}}
+\DeclareUnicodeCharacter{2806}{\brailleeightdotsfalse\braillebox{23}}
+\DeclareUnicodeCharacter{2807}{\brailleeightdotsfalse\braillebox{123}}
+\DeclareUnicodeCharacter{2808}{\brailleeightdotsfalse\braillebox{4}}
+\DeclareUnicodeCharacter{2809}{\brailleeightdotsfalse\braillebox{14}}
+\DeclareUnicodeCharacter{280A}{\brailleeightdotsfalse\braillebox{24}}
+\DeclareUnicodeCharacter{280B}{\brailleeightdotsfalse\braillebox{124}}
+\DeclareUnicodeCharacter{280C}{\brailleeightdotsfalse\braillebox{34}}
+\DeclareUnicodeCharacter{280D}{\brailleeightdotsfalse\braillebox{134}}
+\DeclareUnicodeCharacter{280E}{\brailleeightdotsfalse\braillebox{234}}
+\DeclareUnicodeCharacter{280F}{\brailleeightdotsfalse\braillebox{1234}}
+\DeclareUnicodeCharacter{2810}{\brailleeightdotsfalse\braillebox{5}}
+\DeclareUnicodeCharacter{2811}{\brailleeightdotsfalse\braillebox{15}}
+\DeclareUnicodeCharacter{2812}{\brailleeightdotsfalse\braillebox{25}}
+\DeclareUnicodeCharacter{2813}{\brailleeightdotsfalse\braillebox{125}}
+\DeclareUnicodeCharacter{2814}{\brailleeightdotsfalse\braillebox{35}}
+\DeclareUnicodeCharacter{2815}{\brailleeightdotsfalse\braillebox{135}}
+\DeclareUnicodeCharacter{2816}{\brailleeightdotsfalse\braillebox{235}}
+\DeclareUnicodeCharacter{2817}{\brailleeightdotsfalse\braillebox{1235}}
+\DeclareUnicodeCharacter{2818}{\brailleeightdotsfalse\braillebox{45}}
+\DeclareUnicodeCharacter{2819}{\brailleeightdotsfalse\braillebox{145}}
+\DeclareUnicodeCharacter{281A}{\brailleeightdotsfalse\braillebox{245}}
+\DeclareUnicodeCharacter{281B}{\brailleeightdotsfalse\braillebox{1245}}
+\DeclareUnicodeCharacter{281C}{\brailleeightdotsfalse\braillebox{345}}
+\DeclareUnicodeCharacter{281D}{\brailleeightdotsfalse\braillebox{1345}}
+\DeclareUnicodeCharacter{281E}{\brailleeightdotsfalse\braillebox{2345}}
+\DeclareUnicodeCharacter{281F}{\brailleeightdotsfalse\braillebox{12345}}
+\DeclareUnicodeCharacter{2820}{\brailleeightdotsfalse\braillebox{6}}
+\DeclareUnicodeCharacter{2821}{\brailleeightdotsfalse\braillebox{16}}
+\DeclareUnicodeCharacter{2822}{\brailleeightdotsfalse\braillebox{26}}
+\DeclareUnicodeCharacter{2823}{\brailleeightdotsfalse\braillebox{126}}
+\DeclareUnicodeCharacter{2824}{\brailleeightdotsfalse\braillebox{36}}
+\DeclareUnicodeCharacter{2825}{\brailleeightdotsfalse\braillebox{136}}
+\DeclareUnicodeCharacter{2826}{\brailleeightdotsfalse\braillebox{236}}
+\DeclareUnicodeCharacter{2827}{\brailleeightdotsfalse\braillebox{1236}}
+\DeclareUnicodeCharacter{2828}{\brailleeightdotsfalse\braillebox{46}}
+\DeclareUnicodeCharacter{2829}{\brailleeightdotsfalse\braillebox{146}}
+\DeclareUnicodeCharacter{282A}{\brailleeightdotsfalse\braillebox{246}}
+\DeclareUnicodeCharacter{282B}{\brailleeightdotsfalse\braillebox{1246}}
+\DeclareUnicodeCharacter{282C}{\brailleeightdotsfalse\braillebox{346}}
+\DeclareUnicodeCharacter{282D}{\brailleeightdotsfalse\braillebox{1346}}
+\DeclareUnicodeCharacter{282E}{\brailleeightdotsfalse\braillebox{2346}}
+\DeclareUnicodeCharacter{282F}{\brailleeightdotsfalse\braillebox{12346}}
+\DeclareUnicodeCharacter{2830}{\brailleeightdotsfalse\braillebox{56}}
+\DeclareUnicodeCharacter{2831}{\brailleeightdotsfalse\braillebox{156}}
+\DeclareUnicodeCharacter{2832}{\brailleeightdotsfalse\braillebox{256}}
+\DeclareUnicodeCharacter{2833}{\brailleeightdotsfalse\braillebox{1256}}
+\DeclareUnicodeCharacter{2834}{\brailleeightdotsfalse\braillebox{356}}
+\DeclareUnicodeCharacter{2835}{\brailleeightdotsfalse\braillebox{1356}}
+\DeclareUnicodeCharacter{2836}{\brailleeightdotsfalse\braillebox{2356}}
+\DeclareUnicodeCharacter{2837}{\brailleeightdotsfalse\braillebox{12356}}
+\DeclareUnicodeCharacter{2838}{\brailleeightdotsfalse\braillebox{456}}
+\DeclareUnicodeCharacter{2839}{\brailleeightdotsfalse\braillebox{1456}}
+\DeclareUnicodeCharacter{283A}{\brailleeightdotsfalse\braillebox{2456}}
+\DeclareUnicodeCharacter{283B}{\brailleeightdotsfalse\braillebox{12456}}
+\DeclareUnicodeCharacter{283C}{\brailleeightdotsfalse\braillebox{3456}}
+\DeclareUnicodeCharacter{283D}{\brailleeightdotsfalse\braillebox{13456}}
+\DeclareUnicodeCharacter{283E}{\brailleeightdotsfalse\braillebox{23456}}
+\DeclareUnicodeCharacter{283F}{\brailleeightdotsfalse\braillebox{123456}}
+\DeclareUnicodeCharacter{2840}{\brailleeightdotstrue\braillebox{7}}
+\DeclareUnicodeCharacter{2841}{\brailleeightdotstrue\braillebox{17}}
+\DeclareUnicodeCharacter{2842}{\brailleeightdotstrue\braillebox{27}}
+\DeclareUnicodeCharacter{2843}{\brailleeightdotstrue\braillebox{127}}
+\DeclareUnicodeCharacter{2844}{\brailleeightdotstrue\braillebox{37}}
+\DeclareUnicodeCharacter{2845}{\brailleeightdotstrue\braillebox{137}}
+\DeclareUnicodeCharacter{2846}{\brailleeightdotstrue\braillebox{237}}
+\DeclareUnicodeCharacter{2847}{\brailleeightdotstrue\braillebox{1237}}
+\DeclareUnicodeCharacter{2848}{\brailleeightdotstrue\braillebox{47}}
+\DeclareUnicodeCharacter{2849}{\brailleeightdotstrue\braillebox{147}}
+\DeclareUnicodeCharacter{284A}{\brailleeightdotstrue\braillebox{247}}
+\DeclareUnicodeCharacter{284B}{\brailleeightdotstrue\braillebox{1247}}
+\DeclareUnicodeCharacter{284C}{\brailleeightdotstrue\braillebox{347}}
+\DeclareUnicodeCharacter{284D}{\brailleeightdotstrue\braillebox{1347}}
+\DeclareUnicodeCharacter{284E}{\brailleeightdotstrue\braillebox{2347}}
+\DeclareUnicodeCharacter{284F}{\brailleeightdotstrue\braillebox{12347}}
+\DeclareUnicodeCharacter{2850}{\brailleeightdotstrue\braillebox{57}}
+\DeclareUnicodeCharacter{2851}{\brailleeightdotstrue\braillebox{157}}
+\DeclareUnicodeCharacter{2852}{\brailleeightdotstrue\braillebox{257}}
+\DeclareUnicodeCharacter{2853}{\brailleeightdotstrue\braillebox{1257}}
+\DeclareUnicodeCharacter{2854}{\brailleeightdotstrue\braillebox{357}}
+\DeclareUnicodeCharacter{2855}{\brailleeightdotstrue\braillebox{1357}}
+\DeclareUnicodeCharacter{2856}{\brailleeightdotstrue\braillebox{2357}}
+\DeclareUnicodeCharacter{2857}{\brailleeightdotstrue\braillebox{12357}}
+\DeclareUnicodeCharacter{2858}{\brailleeightdotstrue\braillebox{457}}
+\DeclareUnicodeCharacter{2859}{\brailleeightdotstrue\braillebox{1457}}
+\DeclareUnicodeCharacter{285A}{\brailleeightdotstrue\braillebox{2457}}
+\DeclareUnicodeCharacter{285B}{\brailleeightdotstrue\braillebox{12457}}
+\DeclareUnicodeCharacter{285C}{\brailleeightdotstrue\braillebox{3457}}
+\DeclareUnicodeCharacter{285D}{\brailleeightdotstrue\braillebox{13457}}
+\DeclareUnicodeCharacter{285E}{\brailleeightdotstrue\braillebox{23457}}
+\DeclareUnicodeCharacter{285F}{\brailleeightdotstrue\braillebox{123457}}
+\DeclareUnicodeCharacter{2860}{\brailleeightdotstrue\braillebox{67}}
+\DeclareUnicodeCharacter{2861}{\brailleeightdotstrue\braillebox{167}}
+\DeclareUnicodeCharacter{2862}{\brailleeightdotstrue\braillebox{267}}
+\DeclareUnicodeCharacter{2863}{\brailleeightdotstrue\braillebox{1267}}
+\DeclareUnicodeCharacter{2864}{\brailleeightdotstrue\braillebox{367}}
+\DeclareUnicodeCharacter{2865}{\brailleeightdotstrue\braillebox{1367}}
+\DeclareUnicodeCharacter{2866}{\brailleeightdotstrue\braillebox{2367}}
+\DeclareUnicodeCharacter{2867}{\brailleeightdotstrue\braillebox{12367}}
+\DeclareUnicodeCharacter{2868}{\brailleeightdotstrue\braillebox{467}}
+\DeclareUnicodeCharacter{2869}{\brailleeightdotstrue\braillebox{1467}}
+\DeclareUnicodeCharacter{286A}{\brailleeightdotstrue\braillebox{2467}}
+\DeclareUnicodeCharacter{286B}{\brailleeightdotstrue\braillebox{12467}}
+\DeclareUnicodeCharacter{286C}{\brailleeightdotstrue\braillebox{3467}}
+\DeclareUnicodeCharacter{286D}{\brailleeightdotstrue\braillebox{13467}}
+\DeclareUnicodeCharacter{286E}{\brailleeightdotstrue\braillebox{23467}}
+\DeclareUnicodeCharacter{286F}{\brailleeightdotstrue\braillebox{123467}}
+\DeclareUnicodeCharacter{2870}{\brailleeightdotstrue\braillebox{567}}
+\DeclareUnicodeCharacter{2871}{\brailleeightdotstrue\braillebox{1567}}
+\DeclareUnicodeCharacter{2872}{\brailleeightdotstrue\braillebox{2567}}
+\DeclareUnicodeCharacter{2873}{\brailleeightdotstrue\braillebox{12567}}
+\DeclareUnicodeCharacter{2874}{\brailleeightdotstrue\braillebox{3567}}
+\DeclareUnicodeCharacter{2875}{\brailleeightdotstrue\braillebox{13567}}
